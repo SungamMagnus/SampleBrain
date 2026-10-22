@@ -2,6 +2,32 @@
 
 A custom sample mashing app designed by Aphex Twin.
 
+> **This fork** puts a new interface on the original brain engine: a JUCE app
+> in the Sungam graphite style (dark paper, one monospace face, hairline
+> panels, colour as signal — coral target, teal brain, steel output, amber for
+> anything live).
+>
+> ![The JUCE interface](docs/screenshot.png)
+>
+> ```
+> cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+> cmake --build build -j
+> open build/Samplebrain_artefacts/Release/Samplebrain.app
+> ```
+>
+> Needs only JUCE (`/Applications/JUCE`, or `-DJUCE_DIR=...`). JUCE replaces
+> PortAudio and libsndfile, an in-process bus replaces liblo (same message
+> names), and FFTW is swapped for the vendored header-only pocketfft. The
+> engine changes sit behind compile flags, so the Qt build below is unchanged.
+>
+> What else differs from the Qt app: every control sends its value at startup
+> (the Qt app left the engine on its own defaults until a control was moved),
+> changing a block size re-sends the overlap, sounds and the target can be
+> dropped onto the window, any format JUCE reads loads (wav, aiff, flac, ogg,
+> mp3), and recording writes one stereo wav per take. Not carried over yet:
+> sending to other machines over the network, and mic input (disabled in the
+> original too).
+
 Samplebrain chops samples up into a 'brain' of interconnected small
 sections called blocks which are connected into a network by
 similarity. It processes a target sample, chopping it up into blocks

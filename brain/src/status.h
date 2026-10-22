@@ -14,7 +14,9 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
+#ifndef SAMPLEBRAIN_LOCAL_BUS
 #include <lo/lo.h>
+#endif
 #include <string>
 #include <iostream>
 
@@ -30,7 +32,9 @@ public:
   static void sound_item_refresh();
   static void add_audio_device(int id, const std::string &name, bool default_output);
   static void audio_device_status(const std::string &status);
+#ifndef SAMPLEBRAIN_LOCAL_BUS
   static lo_address m_address;
+#endif
 };
 
 }

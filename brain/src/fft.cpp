@@ -19,6 +19,11 @@
 
 #include <iostream>
 
+#ifdef SAMPLEBRAIN_POCKETFFT
+#include <complex>
+#include "pocketfft_hdronly.h"
+#endif
+
 using namespace spiralcore;
 using namespace std;
 
@@ -33,12 +38,16 @@ FFT::FFT(u32 length, u32 rate, u32 bins) :
   m_bin(new float[bins])
 {
   memset(m_spectrum,0,sizeof(fftw_complex)*length);
+#ifndef SAMPLEBRAIN_POCKETFFT
   m_plan = fftw_plan_dft_r2c_1d(m_length, m_in, m_spectrum, FFTW_ESTIMATE);
+#endif
 }
 
 FFT::~FFT() {
   delete[] m_in;
+#ifndef SAMPLEBRAIN_POCKETFFT
   fftw_destroy_plan(m_plan);
+#endif
 }
 
 void FFT::impulse2freq(const float *imp) {
@@ -46,7 +55,13 @@ void FFT::impulse2freq(const float *imp) {
   for (i=0; i<m_length; i++) {
     m_in[i] = imp[i];
   }
+#ifdef SAMPLEBRAIN_POCKETFFT
+  // unnormalised r2c into the first length/2+1 bins, as FFTW writes them
+  pocketfft::r2c<double>({m_length}, {sizeof(double)}, {sizeof(std::complex<double>)}, 0, true,
+                         m_in, reinterpret_cast<std::complex<double>*>(m_spectrum), 1.0);
+#else
   fftw_execute(m_plan);
+#endif
 }
 
 float FFT::calculate_dominant_freq() {

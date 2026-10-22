@@ -63,6 +63,9 @@ namespace spiralcore {
     double get_slide_error() { return m_slide_error; }
     u32 get_stretch() { return m_stretch; }
     float get_autotune() { return m_autotune; }
+    // read from the UI thread for the playhead, so only ever approximate
+    float get_target_time() const { return m_target_time; }
+    bool is_playing() const { return m_playing; }
 
     brain &get_source() { return m_source; }
 

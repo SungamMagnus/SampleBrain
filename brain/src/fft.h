@@ -14,7 +14,13 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
+#ifdef SAMPLEBRAIN_POCKETFFT
+// pocketfft does arbitrary lengths the way FFTW does, header-only, so a block
+// size of 1000 or 3000 transforms exactly as before.
+typedef double fftw_complex[2];
+#else
 #include <fftw3.h>
+#endif
 #include <spiralcore/types.h>
 
 #ifndef SPIRALCORE_FFT
@@ -33,7 +39,9 @@ namespace spiralcore {
     void calculate_bins();
     float calculate_dominant_freq();
 
+#ifndef SAMPLEBRAIN_POCKETFFT
 	fftw_plan m_plan;
+#endif
 	u32 m_length;
     u32 m_rate;
     u32 m_num_bins;

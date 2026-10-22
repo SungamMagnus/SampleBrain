@@ -20,6 +20,21 @@
 using namespace spiralcore;
 using namespace std;
 
+#ifdef SAMPLEBRAIN_LOCAL_BUS
+#include "spiralcore/local_bus.h"
+
+void status::_update(const std::string &msg) {
+  local_bus::send("8890","/report",msg);
+}
+
+void status::sound_item(const std::string &name, const std::string &colour) {
+  local_bus::send("8890","/sound-item",name,colour);
+}
+
+void status::sound_item_refresh() {
+  local_bus::send("8890","/sound-item-refresh");
+}
+#else
 lo_address status::m_address = lo_address_new_from_url("osc.udp://localhost:8890");
 
 void status::_update(const std::string &msg) {
@@ -33,6 +48,7 @@ void status::sound_item(const std::string &name, const std::string &colour) {
 void status::sound_item_refresh() {
   lo_send(m_address,"/sound-item-refresh","");
 }
+#endif
 
 void status::update(const char *msg, ...) {
     va_list args;

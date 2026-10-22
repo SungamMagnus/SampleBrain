@@ -16,9 +16,14 @@
 
 #include <iostream>
 #include <algorithm>
-#include <sndfile.h>
 #include <float.h>
+#ifdef SAMPLEBRAIN_HOST_SOUNDFILE
+#include <vector>
+#include "sound_file.h"
+#else
+#include <sndfile.h>
 #include <spiralcore/audio.h>
+#endif
 #include "brain.h"
 #include "status.h"
 
@@ -40,6 +45,14 @@ brain::brain() :
 // load, chop up and add to brain
 // todo: add tags
 void brain::load_sound(std::string filename, stereo_mode mode) {
+#ifdef SAMPLEBRAIN_HOST_SOUNDFILE
+  // the host app decodes (any format it can read), we get interleaved floats
+  struct { long frames; int channels; } sfinfo;
+  std::vector<float> interleaved;
+  if (read_sound_file(filename, interleaved, sfinfo.frames, sfinfo.channels)) {
+    sample s(sfinfo.frames);
+    float *temp = interleaved.data();
+#else
   SF_INFO sfinfo;
   sfinfo.format=0;
   SNDFILE* f=sf_open(filename.c_str(), SFM_READ, &sfinfo);
@@ -48,6 +61,7 @@ void brain::load_sound(std::string filename, stereo_mode mode) {
     float *temp = new float[sfinfo.channels * sfinfo.frames];
 
     sf_read_float(f, temp, sfinfo.channels * sfinfo.frames);
+#endif
 
     if (mode==MIX) {
       for(u32 i=0; i<sfinfo.frames; i++) {
@@ -66,7 +80,9 @@ void brain::load_sound(std::string filename, stereo_mode mode) {
       }
     }
 
+#ifndef SAMPLEBRAIN_HOST_SOUNDFILE
     delete[] temp;
+#endif
     m_samples.push_back(sound(filename,s));
     status::update("loaded %s",filename.c_str());
   }
