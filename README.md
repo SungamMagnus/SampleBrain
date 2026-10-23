@@ -2,31 +2,50 @@
 
 A custom sample mashing app designed by Aphex Twin.
 
-> **This fork** puts a new interface on the original brain engine: a JUCE app
-> in the Sungam graphite style (dark paper, one monospace face, hairline
-> panels, colour as signal — coral target, teal brain, steel output, amber for
-> anything live).
->
-> ![The JUCE interface](docs/screenshot.png)
->
-> ```
-> cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
-> cmake --build build -j
-> open build/Samplebrain_artefacts/Release/Samplebrain.app
-> ```
->
-> Needs only JUCE (`/Applications/JUCE`, or `-DJUCE_DIR=...`). JUCE replaces
-> PortAudio and libsndfile, an in-process bus replaces liblo (same message
-> names), and FFTW is swapped for the vendored header-only pocketfft. The
-> engine changes sit behind compile flags, so the Qt build below is unchanged.
->
-> What else differs from the Qt app: every control sends its value at startup
-> (the Qt app left the engine on its own defaults until a control was moved),
-> changing a block size re-sends the overlap, sounds and the target can be
-> dropped onto the window, any format JUCE reads loads (wav, aiff, flac, ogg,
-> mp3), and recording writes one stereo wav per take. Not carried over yet:
-> sending to other machines over the network, and mic input (disabled in the
-> original too).
+This fork puts a new interface on the original brain engine: a JUCE app
+in the Sungam graphite style (dark paper, one monospace face, hairline
+panels, colour as signal: coral target, teal brain, steel output, amber for
+anything live).
+
+![Samplebrain's JUCE interface](docs/screenshot.png)
+
+## Download (macOS)
+
+**[Latest release](https://github.com/SungamMagnus/SampleBrain/releases/latest)**:
+a universal app for Apple Silicon and Intel, macOS 11 or later.
+
+The app is not notarised. The first time, right-click it and choose
+**Open**, or clear the quarantine flag:
+
+    xattr -dr com.apple.quarantine "/Applications/Samplebrain.app"
+
+## What's different in this fork
+
+- A new interface: target across the top with its waveform and playhead,
+  then the brain, its search settings and the mix side by side.
+- Drop sounds onto the brain list and a target onto the waveform. Any
+  format JUCE reads loads: wav, aiff, flac, ogg, mp3.
+- Every control sends its value at startup. The Qt app left the engine on
+  its own defaults until a control was moved.
+- Changing a block size re-sends the overlap, which the engine converts to
+  samples using the block size it holds at that moment.
+- Recording writes one stereo wav per take.
+- Not carried over yet: sending to other machines over OSC, and mic input
+  (disabled in the original too).
+
+## Building
+
+    cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+    cmake --build build -j
+    open build/Samplebrain_artefacts/Release/Samplebrain.app
+
+Needs only JUCE (`/Applications/JUCE`, or pass `-DJUCE_DIR=...`). JUCE
+replaces PortAudio and libsndfile, an in-process bus replaces liblo (same
+message names), and FFTW is swapped for the vendored, header-only
+pocketfft. The engine changes sit behind compile flags, so the original Qt
+build (`samplebrain.pro`) is unchanged.
+
+# About Samplebrain
 
 Samplebrain chops samples up into a 'brain' of interconnected small
 sections called blocks which are connected into a network by
@@ -38,7 +57,6 @@ This allows you to interpret a sound with a different one. As we
 worked on it (during 2015 and 2016) we gradually added more and more
 tweakable parameters until it became slightly out of control.
 
-![](docs/pics/screenshot.png)
 
 Quick start:
 
@@ -66,7 +84,7 @@ testing](https://static.thentrythis.org/samplebrain/samples/).
 Full description of all the parameters and a bit of the thinking
 behind it.
 
-# Download
+# Original Qt builds (Then Try This)
 
 As this is experimental non-commercial software (only originally
 written to run on a couple of computers!) you will have to bear with
@@ -107,7 +125,7 @@ If you'd like the right font, optionally:
 * **Mac (intel)**: [samplebrain_0.18_macintel.zip](https://static.thentrythis.org/samplebrain/samplebrain_0.18_macintel.zip)
 * **Mac (m1)**: [samplebrain_0.18_m1_v2.dmg](https://static.thentrythis.org/samplebrain/samplebrain_0.18_m1_v2.dmg) 
                 
-# Building from source
+# Building the Qt version from source
 ## Linux (Ubuntu)
 Install libraries for the sample engine (use brew on mac, MinGW on win):
 
