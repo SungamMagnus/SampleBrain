@@ -2,10 +2,7 @@
 
 A custom sample mashing app designed by Aphex Twin.
 
-This fork puts a new interface on the original brain engine: a JUCE app
-in the Sungam graphite style (dark paper, one monospace face, hairline
-panels, colour as signal: coral target, teal brain, steel output, amber for
-anything live).
+This fork puts a new interface on the original brain engine.
 
 ![Samplebrain's JUCE interface](docs/screenshot.png)
 
